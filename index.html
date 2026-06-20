@@ -1,0 +1,249 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Minecraft CDK Redeem </title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: system-ui, -apple-system, sans-serif;
+        }
+        /* 底层纯白色背景 */
+        body {
+            background-color: #ffffff;
+            min-height: 100vh;
+            padding-bottom: 40px;
+        }
+
+        /* 顶部标题栏 白色毛玻璃 */
+        .page-header {
+            background: rgba(255, 255, 255, 0.6);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border-bottom: 1px solid rgba(230, 247, 255, 0.7);
+            padding: 24px 16px;
+        }
+        .header-top-bar {
+            display: flex;
+            justify-content: flex-start;
+            align-items: center;
+        }
+        /* 汉堡菜单三条杠 */
+        .menu-icon {
+            display: flex;
+            flex-direction: column;
+            gap: 5px;
+            cursor: pointer;
+        }
+        .menu-line {
+            width: 28px;
+            height: 3px;
+            background-color: #0084ff;
+            border-radius: 2px;
+        }
+
+        /* 彩蛋面板样式 */
+        .egg-panel {
+            margin: 16px 12px 0;
+            padding: 24px;
+            background: rgba(255, 255, 255, 0.7);
+            backdrop-filter: blur(14px);
+            -webkit-backdrop-filter: blur(14px);
+            border: 1px solid rgba(230, 247, 255, 0.8);
+            border-radius: 20px;
+            box-shadow: 0 4px 24px rgba(0, 132, 255, 0.04);
+            color: #12b7f5;
+            font-size: 16px;
+            line-height: 1.8;
+            display: none;
+        }
+        .egg-panel.show {
+            display: block;
+        }
+        /* CDK复制按钮 */
+        .copy-cdk {
+            margin-top:10px;
+            padding:10px 16px;
+            background:rgba(0,132,255,0.12);
+            border:1px solid #0084ff;
+            border-radius:12px;
+            color:#0084ff;
+            cursor:pointer;
+            display:inline-block;
+            transition:0.2s;
+        }
+        .copy-cdk:hover{
+            background:rgba(0,132,255,0.2);
+        }
+        /* 隐藏CDK文本，不占用页面空间 */
+        .hide-cdk {
+            display: none;
+        }
+
+        /* 通用说明小字 #12b7f5 */
+        .desc-text {
+            font-size: 18px;
+            color: #12b7f5;
+            font-weight: 500;
+            margin: 10px 0;
+            padding-left: 4px;
+            line-height: 1.7;
+        }
+
+        /* 外层内容卡片 纯白毛玻璃面板 */
+        .card-list {
+            margin: 20px 12px;
+            padding: 32px 24px;
+            background: rgba(255, 255, 255, 0.7);
+            backdrop-filter: blur(14px);
+            -webkit-backdrop-filter: blur(14px);
+            border: 1px solid rgba(230, 247, 255, 0.8);
+            border-radius: 24px;
+            box-shadow: 0 4px 24px rgba(0, 132, 255, 0.04);
+        }
+
+        /* 更淡的浅灰色磨砂毛玻璃按钮 */
+        .provider-btn {
+            display: block;
+            width: 100%;
+            background: rgba(248, 249, 250, 0.72);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            border: 1px solid rgba(235, 238, 242, 0.75);
+            border-radius: 18px;
+            margin-bottom: 22px;
+            padding: 24px 20px 36px;
+            text-decoration: none;
+            cursor: pointer;
+            transition: all 0.25s ease;
+            text-align: left;
+        }
+        .provider-btn:hover {
+            background-color: rgba(243, 245, 247, 0.82);
+            transform: translateY(-2px);
+            box-shadow: 0 6px 16px rgba(0, 132, 255, 0.06);
+        }
+        /* 按钮主大字 #0084ff */
+        .btn-text {
+            font-size: 30px;
+            color: #0084ff;
+            font-weight: 600;
+            margin-bottom: 8px;
+        }
+        /* 按钮内小字 #12b7f5 */
+        .btn-sub-text {
+            font-size: 15px;
+            color: #12b7f5;
+            font-weight: 400;
+            line-height: 1.6;
+        }
+        /* 红色高亮文本保持不变 */
+        .text-red {
+            color: #d92121;
+            font-weight: 500;
+        }
+        /* 底部分割线 */
+        .footer-line {
+            margin: 40px 16px 16px;
+            height: 1px;
+            background: #ddd;
+        }
+        .footer-tip {
+            margin: 0 16px;
+        }
+        /* 底部标题蓝色大字 */
+        .footer-big {
+            font-size: 24px;
+            color: #0084ff;
+            font-weight: 600;
+            text-align: center;
+            margin-bottom: 8px;
+        }
+        /* 底部步骤蓝色小字 */
+        .footer-small {
+            font-size: 15px;
+            color: #12b7f5;
+            text-align: center;
+            line-height: 1.7;
+        }
+    </style>
+</head>
+<body>
+    <!-- 顶部头部区域 -->
+    <div class="page-header">
+        <div class="header-top-bar">
+            <!-- 三条杠菜单 -->
+            <div class="menu-icon" id="menuBtn">
+                <div class="menu-line"></div>
+                <div class="menu-line"></div>
+                <div class="menu-line"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 点击三条杠展开的彩蛋面板 -->
+    <div class="egg-panel" id="eggBox">
+        <h3 style="color:#0084ff;margin-bottom:10px;">🎉 Free CDK</h3>
+        <!-- CDK文字隐藏，复制逻辑不受影响 -->
+        <p id="cdkText" class="hide-cdk">JF3TY-X634F-33W3T-T6493-9KWKZ</p>
+        <span class="copy-cdk" id="copyBtn">点击复制CDK 📄</span>
+    </div>
+
+    <div class="card-list">
+        <div class="desc-text">点击下面的按钮进入兑换链接：</div>
+        <!-- 第一个淡灰磨砂按钮 -->
+        <a href="https://redeem.microsoft.com/" class="provider-btn">
+            <div class="btn-text">兑换CDK</div>
+            <div class="btn-sub-text">兑换CDK请点我，并按要求登录</div>
+        </a>
+        <!-- 两个按钮中间提示文字 -->
+        <div class="desc-text">无法兑换解决方案：</div>
+        <!-- 第二个淡灰磨砂按钮 -->
+        <a href="https://account.microsoft.com/profile/" class="provider-btn">
+            <div class="btn-text">更改微软账号地址</div>
+            <div class="btn-sub-text">
+                如果兑换时提示:<br><br>
+                <span class="text-red">查看代码附带的说明。你可能需要在其他网页或设备上兑换它，或者你可能不符合兑换此代码的条件</span>
+                <br><br>请修改微软账号地址<br>(强烈建议改成美国🇺🇸)
+            </div>
+        </a>
+    </div>
+
+    <!-- 底部分割横线 + 底部提示 -->
+    <div class="footer-line"></div>
+    <div class="footer-tip">
+        <div class="footer-big">更改地区方法</div>
+        <div class="footer-small">
+            1.点击链接按钮，并登录微软账号<br>
+            2.下滑找到"个人资料信息⇏国家与地区⇏输入密码更改并把地区改成美国⇏保存即可"
+        </div>
+    </div>
+
+    <script>
+        // 点击三条杠切换彩蛋显示/隐藏
+        const menuBtn = document.getElementById('menuBtn');
+        const eggBox = document.getElementById('eggBox');
+        menuBtn.addEventListener('click', () => {
+            eggBox.classList.toggle('show');
+        });
+
+        // 复制CDK功能
+        const copyBtn = document.getElementById('copyBtn');
+        const cdkText = document.getElementById('cdkText').innerText;
+        copyBtn.addEventListener('click',async ()=>{
+            try{
+                await navigator.clipboard.writeText(cdkText);
+                copyBtn.innerText = "已复制！";
+                setTimeout(()=>copyBtn.innerText="点击复制CDK",1500);
+            }catch(err){
+                alert("复制失败，请手动复制："+cdkText);
+            }
+        })
+    </script>
+</body>
+</html>
+
+<!-- HTML by ChoppyNest94347 -->
